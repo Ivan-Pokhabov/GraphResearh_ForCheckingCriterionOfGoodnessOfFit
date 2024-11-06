@@ -6,18 +6,17 @@ from gen import Graph_generator
 class Graph_analyzer:
 
     @staticmethod
-    def get_avg_max_node_degree(scale: float, size: int, experiments_number: int) -> float:
+    def get_avg_max_node_degrees(scale: float, size: int, experiments_number: int) -> list[float]:
         result = 0
 
         for _ in range(experiments_number):
-            distribution = sps.norm.rvs(scale=scale, size=size)
+            distribution = sps.uniform.rvs(scale=scale, size=size)
             dist = (max(distribution) - min(distribution)) / 10
 
             graph = Graph_generator(distribution, dist).generate()
             degrees_array = networkx.degree_histogram(graph)
-            mx = len(degrees_array) - 1
-
-            result += mx
+            
+            result += len(degrees_array)
 
         return result / experiments_number
 
@@ -26,7 +25,7 @@ class Graph_analyzer:
         edges = 0
 
         for _ in range(experiments_number):
-            distribution = sps.expon.rvs(scale=scale, size=size)
+            distribution = sps.uniform.rvs(scale=scale, size=size)
             dist = (max(distribution) - min(distribution)) / 10
 
             graph = Graph_generator(distribution, dist).generate()
