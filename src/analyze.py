@@ -15,7 +15,7 @@ class Graph_analyzer:
 
             graph = Graph_generator(distribution, dist).generate()
             degrees_array = networkx.degree_histogram(graph)
-            
+
             result += len(degrees_array)
 
         return result / experiments_number
