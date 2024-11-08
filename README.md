@@ -28,3 +28,15 @@ Install dependencies:
 ```bash
 poetry install
 ```
+
+## Development
+
+Install requirements
+
+```bash
+poetry install --with dev
+```
+
+## License
+
+This project is licensed under the terms of the **MIT** license. See the [LICENSE](LICENSE) for more information.
