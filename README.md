@@ -7,10 +7,6 @@
 
 ## Requirements
 
-- Python 3.10+
-- numpy 2.0.0+
-- scipy 1.14.0+
-- matplotlib 3.9.1+
 - python = 3.12+
 - networkx = 3.3+
 - numpy = 2.1.1+
