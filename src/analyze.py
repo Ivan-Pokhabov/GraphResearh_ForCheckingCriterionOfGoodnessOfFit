@@ -11,10 +11,7 @@ class Graph_analyzer:
 
         for _ in range(experiments_number):
             sample: list[float] = sps.uniform.rvs(scale=scale, size=size)
-            dist: float = (max(sample) - min(sample)) / 10
-
-            degrees_array: list[int] = Get_Graph_Stat.get_degrees(sample, dist)
-
+            degrees_array: list[int] = Get_Graph_Stat.get_degrees(sample)
             result += len(degrees_array)
 
         return result / experiments_number
@@ -25,21 +22,16 @@ class Graph_analyzer:
 
         for _ in range(experiments_number):
             sample: list[float] = sps.uniform.rvs(scale=scale, size=size)
-            dist: float = (max(sample) - min(sample)) / 10
-
-            edges += networkx.number_of_edges(sample, dist)
+            edges += networkx.number_of_edges(sample)
 
         return edges / experiments_number
 
     @staticmethod
     def get_avg_components_number(scale: float, size: int, experiments_number: int) -> float:
-
-        components = 0
+        components: int = 0
 
         for _ in range(experiments_number):
             sample = sps.norm.rvs(scale=scale, size=size)
-            dist = (max(sample) - min(sample)) / 10
-
-            components += Get_Graph_Stat.get_components_number(sample, dist)
+            components += Get_Graph_Stat.get_components_number(sample)
 
         return components / experiments_number
