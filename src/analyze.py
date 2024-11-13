@@ -1,20 +1,19 @@
 import networkx
 import scipy.stats as sps
-from gen import Graph_generator
+from get_graph_statistics import Get_Graph_Stat
 
 
 class Graph_analyzer:
 
     @staticmethod
-    def get_avg_max_node_degrees(scale: float, size: int, experiments_number: int) -> list[float]:
-        result = 0
+    def get_avg_max_node_degrees(scale: float, size: int, experiments_number: int) -> float:
+        result: int = 0
 
         for _ in range(experiments_number):
-            distribution = sps.uniform.rvs(scale=scale, size=size)
-            dist = (max(distribution) - min(distribution)) / 10
+            sample: list[float] = sps.uniform.rvs(scale=scale, size=size)
+            dist: float = (max(sample) - min(sample)) / 10
 
-            graph = Graph_generator(distribution, dist).generate()
-            degrees_array = networkx.degree_histogram(graph)
+            degrees_array: list[int] = Get_Graph_Stat.get_degrees(sample, dist)
 
             result += len(degrees_array)
 
@@ -22,15 +21,13 @@ class Graph_analyzer:
 
     @staticmethod
     def get_avg_edges_number(scale: float, size: int, experiments_number: int) -> float:
-        edges = 0
+        edges: int = 0
 
         for _ in range(experiments_number):
-            distribution = sps.uniform.rvs(scale=scale, size=size)
-            dist = (max(distribution) - min(distribution)) / 10
+            sample: list[float] = sps.uniform.rvs(scale=scale, size=size)
+            dist: float = (max(sample) - min(sample)) / 10
 
-            graph = Graph_generator(distribution, dist).generate()
-
-            edges += networkx.number_of_edges(graph)
+            edges += networkx.number_of_edges(sample, dist)
 
         return edges / experiments_number
 
@@ -40,11 +37,9 @@ class Graph_analyzer:
         components = 0
 
         for _ in range(experiments_number):
-            distribution = sps.norm.rvs(scale=scale, size=size)
-            dist = (max(distribution) - min(distribution)) / 10
+            sample = sps.norm.rvs(scale=scale, size=size)
+            dist = (max(sample) - min(sample)) / 10
 
-            graph = Graph_generator(distribution, dist).generate()
-
-            components += networkx.number_connected_components(graph)
+            components += Get_Graph_Stat.get_components_number(sample, dist)
 
         return components / experiments_number
