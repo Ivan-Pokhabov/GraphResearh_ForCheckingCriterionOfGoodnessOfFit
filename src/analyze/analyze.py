@@ -73,11 +73,17 @@ class GraphAnalyzer:
         """
         Compute the average maximum degree of nodes in the graphs.
 
+<<<<<<< HEAD
         :param distribution_name: The name of the distribution from scipy.stats
         :param loc: The mean (loc) for the distribution
         :param scale: The standard deviation (scale) for the distribution
         :param size: The sample size
         :param experiments_number: The number of experiments
+=======
+        for _ in range(experiments_number):
+            sample: list[float] = Graph_analyzer.distribution[distribution_name].rvs(scale=scale, size=size)
+            edges += Get_Graph_Stat.get_edges_number(sample)
+>>>>>>> fix: problems with running and remove dataclass, also fix problems with import my modules
 
         :return: The average maximum degree of nodes
         """
