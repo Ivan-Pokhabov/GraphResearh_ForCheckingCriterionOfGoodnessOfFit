@@ -1,4 +1,5 @@
 from multiprocessing import Pool
+from multiprocessing import TimeoutError as MPTimeoutError
 from types import MappingProxyType
 
 import typer
@@ -29,10 +30,19 @@ class GraphAnalyzer:
 
         :return: The generated samples
         """
-        with Pool(processes=4) as pool:
-            return pool.starmap(
-                GraphAnalyzer.distribution[distribution_name].rvs, [(loc, scale, size)] * experiments_number
+        try:
+            with Pool(processes=4) as pool:
+                return pool.starmap(
+                    GraphAnalyzer.distribution[distribution_name].rvs, [(loc, scale, size)] * experiments_number
+                )
+        except KeyError:
+            raise ValueError(
+                f"Invalid distribution name: {distribution_name}. Please use a valid distribution from scipy.stats."
             )
+        except MPTimeoutError:
+            raise RuntimeError("The multiprocessing pool operation timed out.")
+        except Exception as e:
+            raise RuntimeError(f"An error occurred while generating samples: {e}")
 
     @staticmethod
     def _process_results(func, samples: list[list[float]]) -> list[int]:
@@ -44,8 +54,13 @@ class GraphAnalyzer:
 
         :return: The processed results
         """
-        with Pool(processes=4) as pool:
-            return pool.map(func, samples)
+        try:
+            with Pool(processes=4) as pool:
+                return pool.map(func, samples)
+        except MPTimeoutError:
+            raise RuntimeError("The multiprocessing pool operation timed out.")
+        except Exception as e:
+            raise RuntimeError(f"An error occurred while processing results: {e}")
 
     @staticmethod
     def get_avg_max_node_degrees(
@@ -66,9 +81,12 @@ class GraphAnalyzer:
 
         :return: The average maximum degree of nodes
         """
-        samples = GraphAnalyzer._get_samples(distribution_name, loc, scale, size, experiments_number)
-        results = GraphAnalyzer._process_results(Get_Graph_Stat.get_degrees, samples)
-        return sum(map(len, results)) / experiments_number
+        try:
+            samples = GraphAnalyzer._get_samples(distribution_name, loc, scale, size, experiments_number)
+            results = GraphAnalyzer._process_results(Get_Graph_Stat.get_degrees, samples)
+            return sum(map(len, results)) / experiments_number
+        except Exception as e:
+            raise RuntimeError(f"An error occurred while calculating the average maximum node degrees: {e}")
 
     @staticmethod
     def get_avg_edges_number(
@@ -89,9 +107,12 @@ class GraphAnalyzer:
 
         :return: The average number of edges
         """
-        samples = GraphAnalyzer._get_samples(distribution_name, loc, scale, size, experiments_number)
-        results = GraphAnalyzer._process_results(Get_Graph_Stat.get_edges_number, samples)
-        return sum(results) / experiments_number
+        try:
+            samples = GraphAnalyzer._get_samples(distribution_name, loc, scale, size, experiments_number)
+            results = GraphAnalyzer._process_results(Get_Graph_Stat.get_edges_number, samples)
+            return sum(results) / experiments_number
+        except Exception as e:
+            raise RuntimeError(f"An error occurred while calculating the average number of edges: {e}")
 
     @staticmethod
     def get_avg_components_number(
@@ -112,9 +133,12 @@ class GraphAnalyzer:
 
         :return: The average number of components
         """
-        samples = GraphAnalyzer._get_samples(distribution_name, loc, scale, size, experiments_number)
-        results = GraphAnalyzer._process_results(Get_Graph_Stat.get_edges_number, samples)
-        return sum(results) / experiments_number
+        try:
+            samples = GraphAnalyzer._get_samples(distribution_name, loc, scale, size, experiments_number)
+            results = GraphAnalyzer._process_results(Get_Graph_Stat.get_edges_number, samples)
+            return sum(results) / experiments_number
+        except Exception as e:
+            raise RuntimeError(f"An error occurred while calculating the average number of components: {e}")
 
 
 app = typer.Typer()
@@ -133,8 +157,11 @@ def avg_max_node_degrees(
     :param size: The sample size
     :param experiments_number: The number of experiments
     """
-    avg = GraphAnalyzer.get_avg_max_node_degrees(distribution_name, loc, scale, size, experiments_number)
-    typer.echo(f"Average maximum number of nodes: {avg}")
+    try:
+        avg = GraphAnalyzer.get_avg_max_node_degrees(distribution_name, loc, scale, size, experiments_number)
+        typer.echo(f"Average maximum number of nodes: {avg}")
+    except Exception as e:
+        typer.echo(f"Error: {e}")
 
 
 @app.command()
@@ -150,8 +177,11 @@ def avg_edges_number(
     :param size: The sample size
     :param experiments_number: The number of experiments
     """
-    avg = GraphAnalyzer.get_avg_edges_number(distribution_name, loc, scale, size, experiments_number)
-    typer.echo(f"Average number of edges: {avg}")
+    try:
+        avg = GraphAnalyzer.get_avg_edges_number(distribution_name, loc, scale, size, experiments_number)
+        typer.echo(f"Average number of edges: {avg}")
+    except Exception as e:
+        typer.echo(f"Error: {e}")
 
 
 @app.command()
@@ -167,8 +197,11 @@ def avg_components_number(
     :param size: The sample size
     :param experiments_number: The number of experiments
     """
-    avg = GraphAnalyzer.get_avg_components_number(distribution_name, loc, scale, size, experiments_number)
-    typer.echo(f"Average number of components: {avg}")
+    try:
+        avg = GraphAnalyzer.get_avg_components_number(distribution_name, loc, scale, size, experiments_number)
+        typer.echo(f"Average number of components: {avg}")
+    except Exception as e:
+        typer.echo(f"Error: {e}")
 
 
 if __name__ == "__main__":
