@@ -36,7 +36,7 @@ class GraphDrawer:
             sample: list[float] = distribution.rvs(loc=loc, scale=scale, size=size)
             dist: float = max(sample) - min(sample)
 
-            res: gen.GraphGenerator = gen.GraphGenerator(sample, dist)
+            res: gen.GraphGenerator = gen.GraphGenerator.generate(sample, dist)
             graph: nx.Graph = res.generate()
 
             network_graph = Network()
