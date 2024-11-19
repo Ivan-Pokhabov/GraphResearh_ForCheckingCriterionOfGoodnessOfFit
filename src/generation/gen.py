@@ -1,22 +1,19 @@
 import networkx as nx
 
 
-class Graph_generator:
+class GraphGenerator:
 
-    def __init__(self, distribution: list[float], dist: int) -> None:
-        self.distribution = distribution
-        self.dist = dist
-
-    def generate(self) -> nx.Graph:
+    @staticmethod
+    def generate(distribution: list[float], dist: float) -> nx.Graph:
         edges = []
 
-        for i in range(len(self.distribution)):
+        for i in range(len(distribution)):
             for j in range(i):
-                if abs(self.distribution[i] - self.distribution[j]) < self.dist:
+                if abs(distribution[i] - distribution[j]) < dist:
                     edges.append((j, i))
 
         graph = nx.Graph()
-        graph.add_nodes_from(range(self.distribution.size))
+        graph.add_nodes_from(range(distribution.size))
         graph.add_edges_from(edges)
 
         return graph
