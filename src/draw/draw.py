@@ -8,7 +8,10 @@ from ..generation import gen
 app = typer.Typer()
 
 
-class Graph_drawer:
+class GraphDrawer:
+    """
+    A class for generating and visualizing graphs based on statistical distributions.
+    """
 
     @staticmethod
     def draw(
@@ -20,20 +23,20 @@ class Graph_drawer:
         file_path: str = "./graph_view/graph",
     ):
         """
-        Генерация графов из заданного распределения.
+        Generate and visualize graphs based on the specified distribution.
 
-        :param distribution: Распределение из scipy.stats
-        :param graphs_number: Количество графов для генерации
-        :param loc: Среднее значение (loc) для распределения
-        :param scale: Стандартное отклонение (scale) для распределения
-        :param size: Размер выборки
-        :param file_path: Путь для сохранения графов
+        :param distribution: A distribution from scipy.stats
+        :param graphs_number: The number of graphs to generate
+        :param loc: The mean (loc) for the distribution
+        :param scale: The standard deviation (scale) for the distribution
+        :param size: The sample size for each graph
+        :param file_path: The file path to save the graph visualizations
         """
         for i in range(graphs_number):
             sample: list[float] = distribution.rvs(loc=loc, scale=scale, size=size)
             dist: float = max(sample) - min(sample)
 
-            res: gen.Graph_generator = gen.Graph_generator(sample, dist)
+            res: gen.GraphGenerator = gen.GraphGenerator(sample, dist)
             graph: nx.Graph = res.generate()
 
             network_graph = Network()
@@ -44,22 +47,24 @@ class Graph_drawer:
 
 @app.command()
 def main(
-    distribution: str = typer.Argument(..., help="Имя распределения из scipy.stats (например, norm, uniform)."),
-    graphs_number: int = typer.Option(10, help="Количество графов для генерации."),
-    loc: float = typer.Option(0, help="Среднее значение (loc) для распределения."),
-    scale: float = typer.Option(1, help="Стандартное отклонение (scale) для распределения."),
-    size: int = typer.Option(200, help="Размер выборки."),
-    file_path: str = typer.Option("./graph_view/graph", help="Путь для сохранения графов."),
+    distribution: str = typer.Argument(
+        ..., help="The name of the distribution from scipy.stats (e.g., norm, uniform)."
+    ),
+    graphs_number: int = typer.Option(10, help="The number of graphs to generate."),
+    loc: float = typer.Option(0, help="The mean (loc) for the distribution."),
+    scale: float = typer.Option(1, help="The standard deviation (scale) for the distribution."),
+    size: int = typer.Option(200, help="The sample size."),
+    file_path: str = typer.Option("./graph_view/graph", help="The file path to save the graph visualizations."),
 ):
     """
-    Основная функция для обработки аргументов и вызова draw.
+    Main function to handle arguments and call the draw method.
     """
     try:
         distribution_instance = stats_dict[distribution]
     except KeyError:
-        raise typer.BadParameter(f"Распределение {distribution} не найдено в scipy.stats.")
+        raise typer.BadParameter(f"The distribution '{distribution}' was not found in scipy.stats.")
 
-    Graph_drawer.draw(
+    GraphDrawer.draw(
         distribution=distribution_instance,
         graphs_number=graphs_number,
         loc=loc,
