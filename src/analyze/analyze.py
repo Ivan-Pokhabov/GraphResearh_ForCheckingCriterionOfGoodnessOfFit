@@ -135,7 +135,7 @@ class GraphAnalyzer:
         """
         try:
             samples = GraphAnalyzer._get_samples(distribution_name, loc, scale, size, experiments_number)
-            results = GraphAnalyzer._process_results(Get_Graph_Stat.get_edges_number, samples)
+            results = GraphAnalyzer._process_results(Get_Graph_Stat.get_components_number, samples)
             return sum(results) / experiments_number
         except Exception as e:
             raise RuntimeError(f"An error occurred while calculating the average number of components: {e}")
