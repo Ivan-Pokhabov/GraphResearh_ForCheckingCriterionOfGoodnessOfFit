@@ -3,7 +3,7 @@ import networkx as nx
 from ..generation import gen
 
 
-class Get_Graph_Stat:
+class GetGraphStat:
 
     @staticmethod
     def get_edges_number(sample: list[float]) -> int:
