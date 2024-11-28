@@ -5,7 +5,7 @@ from types import MappingProxyType
 import typer
 from scipy.stats import __dict__ as stats_dict
 
-from .get_graph_statistics import Get_Graph_Stat
+from .get_graph_statistics import GetGraphStat
 
 
 class GraphAnalyzer:
@@ -83,7 +83,7 @@ class GraphAnalyzer:
         """
         try:
             samples = GraphAnalyzer._get_samples(distribution_name, loc, scale, size, experiments_number)
-            results = GraphAnalyzer._process_results(Get_Graph_Stat.get_degrees, samples)
+            results = GraphAnalyzer._process_results(GetGraphStat.get_degrees, samples)
             return sum(map(len, results)) / experiments_number
         except Exception as e:
             raise RuntimeError(f"An error occurred while calculating the average maximum node degrees: {e}")
@@ -109,7 +109,7 @@ class GraphAnalyzer:
         """
         try:
             samples = GraphAnalyzer._get_samples(distribution_name, loc, scale, size, experiments_number)
-            results = GraphAnalyzer._process_results(Get_Graph_Stat.get_edges_number, samples)
+            results = GraphAnalyzer._process_results(GetGraphStat.get_edges_number, samples)
             return sum(results) / experiments_number
         except Exception as e:
             raise RuntimeError(f"An error occurred while calculating the average number of edges: {e}")
@@ -135,7 +135,7 @@ class GraphAnalyzer:
         """
         try:
             samples = GraphAnalyzer._get_samples(distribution_name, loc, scale, size, experiments_number)
-            results = GraphAnalyzer._process_results(Get_Graph_Stat.get_components_number, samples)
+            results = GraphAnalyzer._process_results(GetGraphStat.get_edges_number, samples)
             return sum(results) / experiments_number
         except Exception as e:
             raise RuntimeError(f"An error occurred while calculating the average number of components: {e}")
