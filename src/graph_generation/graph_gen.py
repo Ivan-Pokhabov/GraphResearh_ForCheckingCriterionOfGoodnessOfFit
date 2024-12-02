@@ -22,4 +22,4 @@ class GraphGenerator:
                     edges.append((j, i))
 
         with open(path, "w", encoding="UTF-8") as file_out:
-            file_out.write(" ".join([str(x) for x in edges]))
+            file_out.write("\n".join([f"{x[0]} {x[1]}" for x in edges]))
