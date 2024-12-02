@@ -1,9 +1,7 @@
 import networkx as nx
 import typer
 from pyvis.network import Network
-from scipy.stats import __dict__ as stats_dict
-
-from ..generation import gen
+from pathlib import Path
 
 app = typer.Typer()
 
@@ -14,64 +12,27 @@ class GraphDrawer:
     """
 
     @staticmethod
-    def draw(
-        distribution,
-        graphs_number: int = 10,
-        loc: float = 0,
-        scale: float = 1,
-        size: int = 200,
-        file_path: str = "./graph_view/graph",
-    ):
-        """
-        Generate and visualize graphs based on the specified distribution.
-
-        :param distribution: A distribution from scipy.stats
-        :param graphs_number: The number of graphs to generate
-        :param loc: The mean (loc) for the distribution
-        :param scale: The standard deviation (scale) for the distribution
-        :param size: The sample size for each graph
-        :param file_path: The file path to save the graph visualizations
-        """
-        for i in range(graphs_number):
-            sample: list[float] = distribution.rvs(loc=loc, scale=scale, size=size)
-            dist: float = max(sample) - min(sample)
-
-            res: gen.GraphGenerator = gen.GraphGenerator.generate(sample, dist)
-            graph: nx.Graph = res.generate()
-
-            network_graph = Network()
-            network_graph.from_nx(graph)
-            network_graph.prep_notebook()
-            network_graph.show(file_path + f"{i}.html")
+    def draw(file_input: Path, folder_output: str = "./src/storage/graphs_visualization") -> None:
+        with open(file_input, "r") as file:
+            distribution, loc, scale, size = file.readline().strip().split()
+            edges_list = [tuple(map(int, line.split())) for line in file]
+            
+        graph: nx.Graph = nx.Graph()
+        graph.add_nodes_from(range(int(size)))
+        graph.add_edges_from(edges_list)
+        
+        network_graph = Network()
+        network_graph.from_nx(graph)
+        network_graph.prep_notebook()
+        network_graph.show(folder_output + f"{file_input.stem}.html")
 
 
 @app.command()
-def main(
-    distribution: str = typer.Argument(
-        ..., help="The name of the distribution from scipy.stats (e.g., norm, uniform)."
-    ),
-    graphs_number: int = typer.Option(10, help="The number of graphs to generate."),
-    loc: float = typer.Option(0, help="The mean (loc) for the distribution."),
-    scale: float = typer.Option(1, help="The standard deviation (scale) for the distribution."),
-    size: int = typer.Option(200, help="The sample size."),
-    file_path: str = typer.Option("./graph_view/graph", help="The file path to save the graph visualizations."),
-):
-    """
-    Main function to handle arguments and call the draw method.
-    """
-    try:
-        distribution_instance = stats_dict[distribution]
-    except KeyError:
-        raise typer.BadParameter(f"The distribution '{distribution}' was not found in scipy.stats.")
-
-    GraphDrawer.draw(
-        distribution=distribution_instance,
-        graphs_number=graphs_number,
-        loc=loc,
-        scale=scale,
-        size=size,
-        file_path=file_path,
-    )
+def main(folder_input: str = typer.Argument("./src/storage/graphs/"), folder_output: str = typer.Argument("./src/storage/graphs_visualization/")) -> None:
+    directory: Path = Path(folder_input)
+    for file_path in directory.iterdir():
+        if file_path.is_file():
+            GraphDrawer.draw(file_path, folder_output)
 
 
 if __name__ == "__main__":
