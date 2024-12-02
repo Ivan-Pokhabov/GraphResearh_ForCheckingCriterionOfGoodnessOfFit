@@ -11,7 +11,7 @@ class Generator:
         for i in range(graphs_number):
             sample: list[float] = SampleGenerator.generate(distribution, loc, scale, size)
             dist: float = (max(sample) - min(sample)) / 10
-            GraphGenerator.generate(sample, dist, f"{file_name}{i}")
+            GraphGenerator.generate(sample, dist, f"{file_name}{i}.txt")
 
 
 app = typer.Typer()
