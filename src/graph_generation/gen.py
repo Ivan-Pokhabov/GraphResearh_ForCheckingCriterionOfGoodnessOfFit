@@ -11,6 +11,10 @@ class Generator:
         for i in range(graphs_number):
             sample: list[float] = SampleGenerator.generate(distribution, loc, scale, size)
             dist: float = (max(sample) - min(sample)) / 10
+
+            with open(f"./src/storage/graphs/{file_name}{i}.txt", "w", encoding="UTF-8") as file_out:
+                file_out.write(f"{distribution} {loc} {scale} {size}\n")
+
             GraphGenerator.generate(sample, dist, f"{file_name}{i}.txt")
 
 
