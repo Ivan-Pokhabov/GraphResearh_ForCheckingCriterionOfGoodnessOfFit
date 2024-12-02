@@ -1,30 +1,43 @@
-import networkx as nx
+import typer
+
+from .graph_gen import GraphGenerator
+from .sample_gen import SampleGenerator
 
 
-class GraphGenerator:
+class Generator:
 
     @staticmethod
-    def generate(sample: list[float], dist: float) -> nx.Graph:
-        """Generates a graph based on the given sample and distance threshold.
+    def generate(distribution: str, graphs_number: int, loc: float, scale: float, size: int, file_name: str) -> None:
+        for i in range(graphs_number):
+            sample: list[float] = SampleGenerator.generate(distribution, loc, scale, size)
+            dist: float = (max(sample) - min(sample)) / 10
+            GraphGenerator.generate(sample, dist, f"{file_name}{i}")
 
-        The graph is created by adding nodes and edges. An edge is added between two nodes if the
-        absolute difference between their corresponding values in the sample is less than the
-        specified threshold distance.
 
-        :param sample: A list of values representing the sample of the nodes.
-        :param dist: The threshold distance for connecting nodes. Nodes whose values have an absolute
-                     difference less than this threshold will be connected.
-        :return: A NetworkX graph where nodes are connected according to the distance condition."""
+app = typer.Typer()
 
-        edges = []
 
-        for i in range(len(sample)):
-            for j in range(i):
-                if abs(sample[i] - sample[j]) < dist:
-                    edges.append((j, i))
+@app.command()
+def main(
+    distribution: str = typer.Argument(
+        ..., help="The name of the distribution from scipy.stats (e.g., norm, uniform)."
+    ),
+    graphs_number: int = typer.Option(10, help="The number of graphs to generate."),
+    loc: float = typer.Option(0, help="The mean (loc) for the distribution."),
+    scale: float = typer.Option(1, help="The standard deviation (scale) for the distribution."),
+    size: int = typer.Option(200, help="The sample size."),
+    file_name: str = typer.Option("graph", help="The file path to save the graphs."),
+):
 
-        graph = nx.Graph()
-        graph.add_nodes_from(range(sample.size))
-        graph.add_edges_from(edges)
+    Generator.generate(
+        distribution=distribution,
+        graphs_number=graphs_number,
+        loc=loc,
+        scale=scale,
+        size=size,
+        file_name=file_name,
+    )
 
-        return graph
+
+if __name__ == "__main__":
+    app()
