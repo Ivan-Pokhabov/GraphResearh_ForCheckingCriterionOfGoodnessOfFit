@@ -11,7 +11,7 @@ class GraphDrawer:
 
     @staticmethod
     def draw(file_input: Path, folder_output: str = "./src/storage/graphs_visualization") -> None:
-        with open(file_input) as file:
+        with open(file_input, "r", encoding="UTF-8") as file:
             distribution, loc, scale, size = file.readline().strip().split()
             edges_list = [tuple(map(int, line.split())) for line in file]
 
