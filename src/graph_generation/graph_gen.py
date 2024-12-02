@@ -21,5 +21,5 @@ class GraphGenerator:
                 if abs(sample[i] - sample[j]) < dist:
                     edges.append((j, i))
 
-        with open(path, "w", encoding="UTF-8") as file_out:
+        with open(path, "a", encoding="UTF-8") as file_out:
             file_out.write("\n".join([f"{x[0]} {x[1]}" for x in edges]))
