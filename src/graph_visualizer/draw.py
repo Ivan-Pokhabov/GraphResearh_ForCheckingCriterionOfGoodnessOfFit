@@ -8,9 +8,6 @@ app = typer.Typer()
 
 
 class GraphDrawer:
-    """
-    A class for generating and visualizing graphs based on statistical distributions.
-    """
 
     @staticmethod
     def draw(file_input: Path, folder_output: str = "./src/storage/graphs_visualization") -> None:
