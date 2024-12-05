@@ -1,3 +1,4 @@
+from src.graph_analyzer.analyze import GraphAnalyzer
 from src.graph_analyzer.get_graph_statistics import GetGraphStat
 
 
@@ -10,7 +11,8 @@ class MyFunctions:
             "uniform": MyFunctions.__uniform_graph_edges,
             "expon": MyFunctions.__expon_graph_edges,
         }
-        real_edges: int = GetGraphStat.get_edges_number(file_name)
+
+        real_edges: int = GetGraphStat.get_edges_number(GraphAnalyzer._read_graph(file_name))
         my_edges = func_dict[distribution_name](sample_len)
         return real_edges / my_edges
 
@@ -21,7 +23,7 @@ class MyFunctions:
             "uniform": MyFunctions.__uniform_graph_max_degree,
             "expon": MyFunctions.__expon_graph_max_degree,
         }
-        real_max_degree: int = len(GetGraphStat.get_degrees(file_name))
+        real_max_degree: int = len(GetGraphStat.get_degrees(GraphAnalyzer._read_graph(file_name)))
         my_max_degree = func_dict[distribution_name](sample_len)
         return real_max_degree / my_max_degree
 
@@ -32,7 +34,7 @@ class MyFunctions:
             "uniform": MyFunctions.__uniform_graph_components,
             "expon": MyFunctions.__expon_graph_components,
         }
-        real_components: int = GetGraphStat.get_components_number(file_name)
+        real_components: int = GetGraphStat.get_components_number(GraphAnalyzer._read_graph(file_name))
         my_components = func_dict[distribution_name](sample_len)
         return real_components / my_components
 
