@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 
 # 100-2600 +50
