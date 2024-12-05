@@ -13,11 +13,20 @@ class GraphAnalyzer:
     def _process_results(func, files_path: list[str]) -> list[int]:
         try:
             with Pool(processes=4) as pool:
-                return pool.map(func, files_path)
+                args = pool.map(GraphAnalyzer._read_graph, files_path)
+                return pool.starmap(func, args)
         except MPTimeoutError:
             raise RuntimeError("The multiprocessing pool operation timed out.")
         except Exception as e:
             raise RuntimeError(f"An error occurred while processing results: {e}")
+
+    @staticmethod
+    def _read_graph(file_path: str) -> (list[(int, int)], int):
+        with open(file_path, encoding="UTF-8") as file:
+            distribution, loc, scale, size = file.readline().strip().split()
+            edges_list = [tuple(map(int, line.split())) for line in file]
+
+        return edges_list, size
 
     @staticmethod
     def get_avg_max_node_degrees(folder_path: str) -> float:
